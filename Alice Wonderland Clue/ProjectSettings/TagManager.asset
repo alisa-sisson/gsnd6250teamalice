@@ -6,6 +6,9 @@ TagManager:
   tags:
   - PlayerHand
   - Stuff
+  - Sphere
+  - Cylinder
+  - Cube
   layers:
   - Default
   - TransparentFX

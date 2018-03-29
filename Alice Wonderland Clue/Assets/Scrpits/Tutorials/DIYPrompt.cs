@@ -6,6 +6,9 @@ public class DIYPrompt : MonoBehaviour {
 
     bool displayed = false;
 
+    public string CenterText = "There is a potion on the shelf!";
+    public string Prompt = "Now you enter the other room.Use what you learned to get out of the room!";
+
     private void Start()
     {
         
@@ -15,8 +18,8 @@ public class DIYPrompt : MonoBehaviour {
     {
         if (!displayed && other.CompareTag(Constants.Tags.Player))
         {
-            GameManager.Instance.DisplayCenterText("There is a potion on the shelf!");
-            GameManager.Instance.DisplayPrompt("Now you enter the other room. Use what you learned to get out of the room!");
+            GameManager.Instance.DisplayCenterText(CenterText);
+            GameManager.Instance.DisplayPrompt(Prompt);
             displayed = true;
         }
     }

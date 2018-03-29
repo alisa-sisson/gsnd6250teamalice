@@ -16,6 +16,9 @@ public static class Constants
         public const string PlayerHand = "PlayerHand";
         public const string Player = "Player";
         public const string Stuff = "Stuff";
+        public const string Sphere = "Sphere";
+        public const string Cylinder = "Cylinder";
+        public const string Cube = "Cube";
     }
 
     public static class Items

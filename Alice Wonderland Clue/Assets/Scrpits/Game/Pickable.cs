@@ -36,4 +36,12 @@ public class Pickable : MonoBehaviour
             }
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(Constants.Tags.Player))
+        {
+            GameManager.Instance.DisplayPrompt("Press E to pickup the item.");
+        }
+    }
 }
