@@ -9,6 +9,7 @@ TagManager:
   - Sphere
   - Cylinder
   - Cube
+  - Music
   layers:
   - Default
   - TransparentFX
