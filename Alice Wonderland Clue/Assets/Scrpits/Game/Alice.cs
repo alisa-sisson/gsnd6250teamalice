@@ -7,9 +7,15 @@ public class Alice : MonoBehaviour
 {
 
     public List<string> Inventory = new List<string>();
+    //Transform playerHand;
+
+    Pickable pickedUpObj;
 
     [SerializeField]
     float pickupDistance = 1.5f;
+
+    [SerializeField]
+    float carryDistance = 1f;
 
     FirstPersonController fps;
 
@@ -26,14 +32,47 @@ public class Alice : MonoBehaviour
         }
     }
 
+    public bool Carrying
+    {
+        get { return pickedUpObj != null; }
+    }
+
     // Use this for initialization
     void Start()
     {
         fps = GetComponent<FirstPersonController>();
+        //playerHand = GameObject.FindGameObjectWithTag(Constants.Tags.PlayerHand).transform;
     }
 
     // Update is called once per frame
     void Update()
+    {
+        CheckInput();
+    }
+
+    private void FixedUpdate()
+    {
+        if (Carrying)
+        {
+            if (pickedUpObj.Touched)
+            {
+                PutDownObj();
+            }
+            else
+            {
+                float cdis = carryDistance;
+                //RaycastHit hit;
+                //if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                //{
+                //    cdis = Mathf.Min(hit.distance, carryDistance);
+                //}
+
+                pickedUpObj.transform.position = Camera.main.transform.position + Camera.main.transform.forward * cdis;
+            }
+        }
+    }
+
+    private void CheckInput()
     {
         if (Input.GetKey(KeyCode.R))
         {
@@ -49,6 +88,73 @@ public class Alice : MonoBehaviour
             }
 
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            // Have I picked up one thing already?
+            if (Carrying)
+            {
+                // Put it down
+                PutDownObj();
+            }
+            else
+            {
+                // Cast a ray
+                RaycastHit hit;
+                LayerMask layerMask = LayerMask.GetMask("Pickable");
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, layerMask))
+                {
+                    Pickable o = hit.collider.GetComponent<Pickable>();
+                    if (o != null)
+                    {
+                        float dist = Vector3.Distance(transform.position, o.gameObject.transform.position);
+                        if (dist > PickupDistance) return;
+
+                        // Ok pick it up
+                        pickedUpObj = o.GetComponent<Pickable>();
+                        pickedUpObj.GetComponent<Rigidbody>().isKinematic = true;
+                        pickedUpObj.transform.parent = transform;
+                        //pickedUpObj.transform.position = playerHand.position;
+                    }
+                }
+            }
+
+            //// Cast a ray
+            ////RaycastHit hit;
+            ////LayerMask layerMask = LayerMask.GetMask("Pickable");
+            //if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, layerMask))
+            //{
+            //    // if that thing is picked up?
+            //    Pickable o = hit.collider.GetComponent<Pickable>();
+            //    if (o != null)
+            //    {
+            //        bool pickedUp = o.Pickedup;
+            //        if (!pickedUp)
+            //        {
+            //            float dist = Vector3.Distance(transform.position, o.gameObject.transform.position);
+            //            if (dist > PickupDistance) return;
+
+            //            o.GetComponent<Rigidbody>().isKinematic = true;
+            //            o.gameObject.transform.position = playerHand.position;
+            //            o.gameObject.transform.parent = transform;
+            //            pickedUp = o.Pickedup = true;
+            //        }
+            //        else
+            //        {
+            //            o.gameObject.transform.parent = GameObject.FindGameObjectWithTag(Constants.Tags.Stuff).transform;
+            //            o.GetComponent<Rigidbody>().isKinematic = false;
+            //            pickedUp = o.Pickedup = false;
+            //        }
+            //    }
+            //}
+        }
+    }
+
+    private void PutDownObj()
+    {
+        pickedUpObj.transform.parent = GameObject.FindGameObjectWithTag(Constants.Tags.Stuff).transform;
+        pickedUpObj.GetComponent<Rigidbody>().isKinematic = false;
+        pickedUpObj = null;
     }
 
     public void Shrink()
