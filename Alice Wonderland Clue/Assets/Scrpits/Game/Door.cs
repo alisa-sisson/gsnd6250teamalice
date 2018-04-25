@@ -6,43 +6,53 @@ public class Door : MonoBehaviour
 {
     public float speed = 0.1F;
     public bool opened = false;
+    public bool atTheHandle = false;
 
     public void Open()
     {
-        StartCoroutine(OpenCoroutine());
+        if (!opened)
+            StartCoroutine(RotateToCoroutine(90f));
     }
 
-    IEnumerator OpenCoroutine()
+    public void Close()
     {
-        //Quaternion from = transform.rotation;
-        //Vector3 angles = transform.eulerAngles;
-        //angles.x = -25f;
-        //Quaternion to = Quaternion.Euler(new Vector3(0, 90, 90));
+        if (opened)
+            StartCoroutine(RotateToCoroutine(0f));
+    }
 
-        //while (transform.eulerAngles.x - angles.x > 0.001)
-        //{
-        //    transform.rotation = Quaternion.Slerp(from, to, Time.time * speed);
-        //    yield return new WaitForEndOfFrame();
-        //}
+    IEnumerator RotateToCoroutine(float toAngle)
+    {
+        Quaternion from = transform.rotation;
+        Vector3 angles = transform.eulerAngles;
+        angles.y = toAngle;
+        Quaternion to = Quaternion.Euler(angles);
 
-        Vector3 from = transform.eulerAngles;
-        Vector3 to = new Vector3(0, 90, 90);
-        while(transform.eulerAngles.x - to.x > 0.001)
+        while (Mathf.Abs(transform.eulerAngles.y - angles.y) > 0.001)
         {
-            transform.Rotate(Vector3.up * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(from, to, Time.time * speed);
             yield return new WaitForEndOfFrame();
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (!opened)
+            if (atTheHandle && !opened)
             {
                 Open();
+                opened = true;
             }
-            opened = !opened;
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        atTheHandle = true;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        atTheHandle = false;
+    }
+
 }
