@@ -6,18 +6,33 @@ public class Door : MonoBehaviour
 {
     public float speed = 0.1F;
     public bool opened = false;
+    public bool locked = false;
     public bool atTheHandle = false;
+    public static float autoCloseDuration = 3f;
 
     public void Open()
     {
+        if (locked)
+        {
+            GameManager.Instance.DisplayCenterText("The door is locked.");
+            return;
+        }
+
         if (!opened)
+        {
             StartCoroutine(RotateToCoroutine(90f));
+            opened = true;
+            StartCoroutine(AutoCloseCoroutine(autoCloseDuration));
+        }
     }
 
     public void Close()
     {
         if (opened)
+        {
             StartCoroutine(RotateToCoroutine(0f));
+            opened = false;
+        }
     }
 
     IEnumerator RotateToCoroutine(float toAngle)
@@ -34,6 +49,12 @@ public class Door : MonoBehaviour
         }
     }
 
+    IEnumerator AutoCloseCoroutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        Close();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -41,7 +62,6 @@ public class Door : MonoBehaviour
             if (atTheHandle && !opened)
             {
                 Open();
-                opened = true;
             }
         }
     }
@@ -49,6 +69,7 @@ public class Door : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         atTheHandle = true;
+        GameManager.Instance.DisplayPrompt("Press [E] to open the door.");
     }
     private void OnTriggerExit(Collider other)
     {

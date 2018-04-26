@@ -168,7 +168,7 @@ public class Alice : MonoBehaviour
         float shrinkStep = 0.01f;
         while (progress < 1f)
         {
-            Vector3 newScale = Vector3.Lerp(Vector3.one, new Vector3(0.1f, 0.1f, 0.1f), progress + shrinkStep);
+            Vector3 newScale = Vector3.Lerp(Vector3.one, new Vector3(0.2f, 0.2f, 0.2f), progress + shrinkStep);
             gameObject.transform.localScale = newScale;
             float newWalkSpeed = Mathf.Lerp(5f, 1f, progress + shrinkStep);
             float newRunSpeed = Mathf.Lerp(10f, 2f, progress + shrinkStep);

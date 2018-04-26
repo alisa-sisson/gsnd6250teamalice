@@ -23,15 +23,15 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    public void DisplayCenterText(string text)
+    public void DisplayCenterText(string text, float duration = 2f)
     {
-        StartCoroutine(DisplayCenterTextCoroutine(text));
+        StartCoroutine(DisplayCenterTextCoroutine(text, duration));
 
     }
 
-    public void DisplayPrompt(string text)
+    public void DisplayPrompt(string text, float duration = 3f)
     {
-        StartCoroutine(DisplayPromptCoroutine(text));
+        StartCoroutine(DisplayPromptCoroutine(text, duration));
     }
 
     public void DisplayCrouchPrompt()
@@ -52,19 +52,19 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    IEnumerator DisplayCenterTextCoroutine(string text)
+    IEnumerator DisplayCenterTextCoroutine(string text, float duration)
     {
         centerText.text = text;
         centerText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(duration);
         centerText.gameObject.SetActive(false);
     }
 
-    IEnumerator DisplayPromptCoroutine(string text)
+    IEnumerator DisplayPromptCoroutine(string text, float duration)
     {
         promptText.text = text;
         promptText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(duration);
         promptText.gameObject.SetActive(false);
     }
 
