@@ -11,6 +11,23 @@ public class GameManager : Singleton<GameManager>
     public Text centerText;
     public Animator itemAnimator;
 
+    public Door doorLv1;
+
+
+    private int currentLevel = 1;
+    public int CurrentLevel
+    {
+        get
+        {
+            return currentLevel;
+        }
+
+        set
+        {
+            currentLevel = value;
+        }
+    }
+
     public void DisplayItemAnim()
     {
         itemAnimator.gameObject.SetActive(true);

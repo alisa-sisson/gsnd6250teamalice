@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public float speed = 0.1F;
+    public float speedInterval = 0.01f;
     public bool opened = false;
     public bool locked = false;
     public bool atTheHandle = false;
-    public static float autoCloseDuration = 3f;
+    public static float autoCloseDuration = 6f;
 
     public void Open()
     {
@@ -35,6 +35,23 @@ public class Door : MonoBehaviour
         }
     }
 
+    IEnumerator RotateToCoroutine(float fromAngle, float toAngle)
+    {
+        Vector3 angles = transform.eulerAngles;
+        angles.y = fromAngle;
+        Quaternion from = Quaternion.Euler(angles);
+        angles.y = toAngle;
+        Quaternion to = Quaternion.Euler(angles);
+
+        float progress = 0f;
+        while (progress < 1f)
+        {
+            transform.rotation = Quaternion.Slerp(from, to, progress);
+            progress += speedInterval;
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     IEnumerator RotateToCoroutine(float toAngle)
     {
         Quaternion from = transform.rotation;
@@ -42,9 +59,11 @@ public class Door : MonoBehaviour
         angles.y = toAngle;
         Quaternion to = Quaternion.Euler(angles);
 
-        while (Mathf.Abs(transform.eulerAngles.y - angles.y) > 0.001)
+        float progress = 0f;
+        while (progress < 1f)
         {
-            transform.rotation = Quaternion.Slerp(from, to, Time.time * speed);
+            transform.rotation = Quaternion.Slerp(from, to, progress);
+            progress += speedInterval;
             yield return new WaitForEndOfFrame();
         }
     }
@@ -69,7 +88,8 @@ public class Door : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         atTheHandle = true;
-        GameManager.Instance.DisplayPrompt("Press [E] to open the door.");
+        if (!locked)
+            GameManager.Instance.DisplayPrompt("Press [E] to open the door.");
     }
     private void OnTriggerExit(Collider other)
     {

@@ -118,35 +118,6 @@ public class Alice : MonoBehaviour
                     }
                 }
             }
-
-            //// Cast a ray
-            ////RaycastHit hit;
-            ////LayerMask layerMask = LayerMask.GetMask("Pickable");
-            //if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, layerMask))
-            //{
-            //    // if that thing is picked up?
-            //    Pickable o = hit.collider.GetComponent<Pickable>();
-            //    if (o != null)
-            //    {
-            //        bool pickedUp = o.Pickedup;
-            //        if (!pickedUp)
-            //        {
-            //            float dist = Vector3.Distance(transform.position, o.gameObject.transform.position);
-            //            if (dist > PickupDistance) return;
-
-            //            o.GetComponent<Rigidbody>().isKinematic = true;
-            //            o.gameObject.transform.position = playerHand.position;
-            //            o.gameObject.transform.parent = transform;
-            //            pickedUp = o.Pickedup = true;
-            //        }
-            //        else
-            //        {
-            //            o.gameObject.transform.parent = GameObject.FindGameObjectWithTag(Constants.Tags.Stuff).transform;
-            //            o.GetComponent<Rigidbody>().isKinematic = false;
-            //            pickedUp = o.Pickedup = false;
-            //        }
-            //    }
-            //}
         }
     }
 
