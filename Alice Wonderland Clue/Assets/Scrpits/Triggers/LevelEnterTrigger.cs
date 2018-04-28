@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class LevelEnterTrigger : MonoBehaviour
 {
-
+    public Door relatedDoor;
+    public Door relatedDoorExtra;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -13,8 +14,11 @@ public class LevelEnterTrigger : MonoBehaviour
         switch (currentLevel)
         {
             case 1:
-                // Enters level 1
-                GameManager.Instance.doorLv1.locked = true;
+            case 2:
+            case 3:
+            case 4:
+                relatedDoor.locked = false;
+                if (relatedDoorExtra != null) relatedDoorExtra.locked = false;
                 break;
             default:
                 break;

@@ -9,12 +9,27 @@ public class Door : MonoBehaviour
     public bool locked = false;
     public bool atTheHandle = false;
     public static float autoCloseDuration = 6f;
+    public Alice.Size size = Alice.Size.Normal;
 
     public void Open()
     {
+        // Check lock
         if (locked)
         {
             GameManager.Instance.DisplayCenterText("The door is locked.");
+            return;
+        }
+
+        // Check size
+        Alice.Size aliceSize = Alice.Instance.size;
+        if (aliceSize != size)
+        {
+            if ((int)aliceSize > (int)size)
+                GameManager.Instance.DisplayCenterText("You are too big for the door!\n"+
+                    "Try to find a potion to change the size.");
+            else
+                GameManager.Instance.DisplayCenterText("The door seems too tall to reach!\n" +
+                    "Try to find a potion to change the size.");
             return;
         }
 

@@ -11,9 +11,6 @@ public class GameManager : Singleton<GameManager>
     public Text centerText;
     public Animator itemAnimator;
 
-    public Door doorLv1;
-
-
     private int currentLevel = 1;
     public int CurrentLevel
     {
@@ -27,6 +24,8 @@ public class GameManager : Singleton<GameManager>
             currentLevel = value;
         }
     }
+
+    public int finalDoorsOpened = 0;
 
     public void DisplayItemAnim()
     {
@@ -49,6 +48,11 @@ public class GameManager : Singleton<GameManager>
     public void DisplayPrompt(string text, float duration = 3f)
     {
         StartCoroutine(DisplayPromptCoroutine(text, duration));
+    }
+
+    public void DisplayCenterImage(Sprite sprite, float duration = 3f)
+    {
+        StartCoroutine(DisplayCenterImageCoroutine(sprite, duration));
     }
 
     public void DisplayCrouchPrompt()
@@ -85,6 +89,17 @@ public class GameManager : Singleton<GameManager>
         promptText.gameObject.SetActive(false);
     }
 
+    public Image centerImage;
+    IEnumerator DisplayCenterImageCoroutine(Sprite sprite, float duration)
+    {
+        centerImage.sprite = sprite;
+        centerImage.gameObject.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        centerImage.gameObject.SetActive(false);
+        centerImage.sprite = null;
+    }
+
+
     IEnumerator DisplayCrouchPromptCoroutine()
     {
         promptText.text = Constants.Prompts.Crouch;
@@ -107,5 +122,14 @@ public class GameManager : Singleton<GameManager>
         promptText.gameObject.SetActive(true);
         yield return new WaitForSeconds(3f);
         promptText.gameObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (finalDoorsOpened >= 3)
+        {
+            // Win the game!
+            DisplayCenterText("You beat the game! \nAnd now you could exit.", 60f);
+        }
     }
 }

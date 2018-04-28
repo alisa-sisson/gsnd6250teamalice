@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class Alice : MonoBehaviour
+public class Alice : Singleton<Alice>
 {
+    public enum Size { Small = 0, Normal = 1, Big = 2 }
 
-    public List<string> Inventory = new List<string>();
+    public Size size = Size.Normal;
+    //public List<string> Inventory = new List<string>();
     //Transform playerHand;
 
     Pickable pickedUpObj;
@@ -74,19 +76,42 @@ public class Alice : MonoBehaviour
 
     private void CheckInput()
     {
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.Alpha1))
         {
-            if (Inventory.Count > 0)
+            // Shrink potions
+            InventoryItem item = Inventory.Instance.Use(Constants.Items.ShrinkPotion, true);
+            if (item != null)
             {
-                if (Inventory[0] == Constants.Items.ShrinkPotion)
-                {
-                    Shrink();
-                    GameManager.Instance.DisplayCenterText(string.Format("You used {0}!", Inventory[0]));
-                    Inventory.RemoveAt(0);
-                    GameManager.Instance.HideItemAnim();
-                }
+                Size toSize = Size.Small;
+                ChangeSize(size, toSize);
+                GameManager.Instance.DisplayCenterText(string.Format("You used {0}!", item.name), 5f);
+                //GameManager.Instance.HideItemAnim();
             }
 
+        }
+        if (Input.GetKey(KeyCode.Alpha2))
+        {
+            // Normal potions
+            InventoryItem item = Inventory.Instance.Use(Constants.Items.NormalPotion, true);
+            if (item != null)
+            {
+                Size toSize = Size.Normal;
+                ChangeSize(size, toSize);
+                GameManager.Instance.DisplayCenterText(string.Format("You used {0}!", item.name), 5f);
+                //GameManager.Instance.HideItemAnim();
+            }
+        }
+        if (Input.GetKey(KeyCode.Alpha3))
+        {
+            // Normal potions
+            InventoryItem item = Inventory.Instance.Use(Constants.Items.GrowPotion, true);
+            if (item != null)
+            {
+                Size toSize = Size.Big;
+                ChangeSize(size, toSize);
+                GameManager.Instance.DisplayCenterText(string.Format("You used {0}!", item.name), 5f);
+                //GameManager.Instance.HideItemAnim();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -128,27 +153,86 @@ public class Alice : MonoBehaviour
         pickedUpObj = null;
     }
 
-    public void Shrink()
+    public void ChangeSize(Size from, Size to)
     {
-        StartCoroutine(ShrinkCoroutine());
+        StartCoroutine(ChangeSizeCoroutine(from, to));
     }
 
-    IEnumerator ShrinkCoroutine()
+    IEnumerator ChangeSizeCoroutine(Size from, Size to)
     {
+        float oriSize;
+        float oriWalkSpeed;
+        float oriRunSpeed;
+        float oriStepInterval;
+        float newWalkSpeed;
+        float newRunSpeed;
+        float newStepInterval;
+        float newSize;
+
+        switch (from)
+        {
+            case Size.Big:
+                oriSize = 8f;            // TODO:
+                oriWalkSpeed = 20f;       // TODO:
+                oriRunSpeed = 30f;       // TODO:
+                oriStepInterval = 5f;    // TODO:
+                break;
+            case Size.Small:
+                oriSize = 1.75f;
+                oriWalkSpeed = 12f;
+                oriRunSpeed = 7f;
+                oriStepInterval = 7f;
+                break;
+            case Size.Normal:
+                oriSize = 3.815913f;
+                oriWalkSpeed = 15f;
+                oriRunSpeed = 30f;
+                oriStepInterval = 15f;
+                break;
+            default:
+                yield break;
+        }
+
+        switch (to)
+        {
+            case Size.Big:
+                newSize = 8f;            // TODO:
+                newWalkSpeed = 20f;      // TODO:
+                newRunSpeed = 30f;       // TODO:
+                newStepInterval = 5f;    // TODO:
+                break;
+            case Size.Small:
+                newSize = 1.75f;
+                newWalkSpeed = 7f;
+                newRunSpeed = 12f;
+                newStepInterval = 7f;
+                break;
+            case Size.Normal:
+                newSize = 3.815913f;
+                newWalkSpeed = 15f;
+                newRunSpeed = 30f;
+                newStepInterval = 15f;
+                break;
+            default:
+                yield break;
+        }
+
         float progress = 0f;
         float shrinkStep = 0.01f;
         while (progress < 1f)
         {
-            Vector3 newScale = Vector3.Lerp(Vector3.one, new Vector3(0.2f, 0.2f, 0.2f), progress + shrinkStep);
+            Vector3 newScale = Vector3.Lerp(new Vector3(oriSize, oriSize, oriSize), new Vector3(newSize, newSize, newSize), progress);
             gameObject.transform.localScale = newScale;
-            float newWalkSpeed = Mathf.Lerp(5f, 1f, progress + shrinkStep);
-            float newRunSpeed = Mathf.Lerp(10f, 2f, progress + shrinkStep);
-            float newStepInterval = Mathf.Lerp(5f, 1f, progress + shrinkStep);
-            fps.WalkSpeed = newWalkSpeed;
-            fps.RunSpeed = newRunSpeed;
-            fps.StepInterval = newStepInterval;
+            float interWalkSpeed = Mathf.Lerp(oriWalkSpeed, newWalkSpeed, progress);
+            float interRunSpeed = Mathf.Lerp(oriRunSpeed, newRunSpeed, progress);
+            float interStepInterval = Mathf.Lerp(oriStepInterval, newStepInterval, progress);
+            fps.WalkSpeed = interWalkSpeed;
+            fps.RunSpeed = interRunSpeed;
+            fps.StepInterval = interStepInterval;
             progress += shrinkStep;
             yield return new WaitForEndOfFrame();
         }
+
+        size = to;
     }
 }

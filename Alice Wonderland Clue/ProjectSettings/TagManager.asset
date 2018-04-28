@@ -10,6 +10,9 @@ TagManager:
   - Cylinder
   - Cube
   - Music
+  - Golden
+  - Silver
+  - Bronze
   layers:
   - Default
   - TransparentFX

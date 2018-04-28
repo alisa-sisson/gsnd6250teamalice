@@ -24,5 +24,7 @@ public static class Constants
     public static class Items
     {
         public const string ShrinkPotion = "Shrink Potion";
+        public const string NormalPotion = "Normal Potion";
+        public const string GrowPotion = "Grow Potion";
     }
 }
